@@ -1,0 +1,16 @@
+---
+
+# set this explicitly
+# openldap_replica_role: "master"
+# openldap_replica_master_url: "ldap://"
+
+# refreshOnly|refreshAndPersist
+openldap_replica_method: refreshOnly
+# interval: dd:hh:mm:ss
+openldap_replica_interval: 00:00:10:00
+
+openldap_replica_db_dns:
+  - "{{ openldap_configdb_config_dn }}"
+  - "{{ openldap_datadb_config_dn }}"
+#openldap_replication_bind_dn:
+#openldap_replication_bind_password:

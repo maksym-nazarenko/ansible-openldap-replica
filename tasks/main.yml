@@ -1,0 +1,9 @@
+---
+
+- include: _master.yml
+  when: openldap_replica_role == "master"
+  tags: [ openldap, openldap-replica ]
+
+- include: _slave-readonly.yml
+  when: openldap_replica_role == "slave"
+  tags: [ openldap, openldap-replica ]

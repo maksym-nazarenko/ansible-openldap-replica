@@ -1,0 +1,8 @@
+{% for dn in openldap_replica_db_dns %}
+dn: olcOverlay=syncprov,{{ dn }}
+changetype: add
+objectClass: olcOverlayConfig
+objectClass: olcSyncProvConfig
+olcOverlay: syncprov
+
+{% endfor %}

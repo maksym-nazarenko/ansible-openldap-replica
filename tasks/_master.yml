@@ -1,0 +1,47 @@
+---
+
+- name: Replication | Master | Check whether syncprov overlay loaded
+  command: ldapsearch -Y external -H ldapi:/// -D "cn=admin,cn=config" -b "cn=config" -LLL "(olcOverlay=syncprov)"
+  register: openldap__syncprov_present
+  changed_when: 'not ("syncprov" in openldap__syncprov_present.stdout)'
+  tags: [ openldap, openldap-schema, openldap-configure ]
+
+- name: Replication | Master | Syncprov overlay | generating .ldif
+  template:
+    src: overlays/syncprov.enable.ldif.j2
+    dest: /tmp/syncprov.ldif
+    owner: root
+    group: root
+    mode: 0600
+  when: openldap__syncprov_present| changed
+
+- name: Replication | Master | Syncprov overlay | importing .ldif
+  command: ldapadd -Y external -H ldapi:/// -f /tmp/syncprov.ldif
+  when: openldap__syncprov_present| changed
+
+- name: Replication | Master | Syncprov overlay | removing .ldif
+  file: path=/tmp/syncprov.ldif state=absent
+  when: openldap__syncprov_present| changed
+
+- name: Replication | Master | Check whether syncprov enabled for DBs
+  command: ldapsearch -Y external -H ldapi:/// -D "cn=admin,cn=config" -b "cn=config" -LLL "(olcOverlay=syncprov)"
+  register: openldap__syncprov_present
+  changed_when: 'not ("olcSyncProvConfig" in openldap__syncprov_present.stdout)'
+  tags: [ openldap, openldap-schema, openldap-configure ]
+
+- name: Replication | Master | Enabling syncprov for DBs | generating .ldif
+  template:
+    src: syncprov.setup.ldif.j2
+    dest: /tmp/syncprov.ldif
+    owner: root
+    group: root
+    mode: 0600
+  when: openldap__syncprov_present| changed
+
+- name: Replication | Master | Enabling syncprov for DBs | importing .ldif
+  command: ldapmodify -Y external -H ldapi:/// -f /tmp/syncprov.ldif
+  when: openldap__syncprov_present| changed
+
+- name: Replication | Master | Enabling syncprov for DBs | removing .ldif
+  file: path=/tmp/syncprov.ldif state=absent
+  when: openldap__syncprov_present| changed

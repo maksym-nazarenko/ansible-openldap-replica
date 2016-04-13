@@ -1,0 +1,16 @@
+dn: {{ openldap_datadb_config_dn }}
+changetype: modify
+replace: olcSyncrepl
+olcSyncrepl: rid=001
+  provider="{{ openldap_replica_master_url }}"
+  type={{ openldap_replica_method }}
+  interval="{{ openldap_replica_interval }}"
+  retry="30 10 300 +"
+  searchbase="{{ openldap_domain_suffix }}"
+  attrs="*,+"
+  scope=sub
+  schemachecking=off
+  bindmethod=simple
+  binddn="{{ openldap_replica_bind_dn }}"
+  credentials="{{ openldap_replica_bind_password }}"
+  starttls=yes
