@@ -1,7 +1,7 @@
 ---
 
 - name: Replication | Master | Check whether syncprov overlay loaded
-  command: ldapsearch -Y external -H ldapi:/// -D "cn=admin,cn=config" -b "cn=config" -LLL "(olcOverlay=syncprov)"
+  command: ldapsearch -Y external -H ldapi:/// -b "cn=config" -LLL "(olcOverlay=syncprov)"
   register: openldap__syncprov_present
   changed_when: 'not ("syncprov" in openldap__syncprov_present.stdout)'
   tags: [ openldap, openldap-schema, openldap-configure ]
